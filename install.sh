@@ -17,7 +17,7 @@
 set -euo pipefail
 
 SKILLS=(6502-instruction-set 6502-memory-map 6502-merlin-assembler 6502-sweet16 6502-to-rust)
-SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 mode="symlink"
 declare -a targets=()
@@ -49,15 +49,24 @@ if [ ${#targets[@]} -eq 0 ]; then
 fi
 
 for dest in "${targets[@]}"; do
-  mkdir -p "$dest"
+  mkdir -p -- "$dest"
+  # Resolve to a real path and refuse a destination that is the source repo or
+  # nested inside it: the rm -rf below would delete the canonical skill dirs.
+  dest_real="$(cd -- "$dest" && pwd -P)"
+  case "$dest_real/" in
+    "$SRC"/* )
+      echo "refusing to install into $dest_real: it is inside the source repo ($SRC)." >&2
+      echo "install into a different directory (e.g. ~/.claude/skills or ~/.agents/skills)." >&2
+      exit 1 ;;
+  esac
   for s in "${SKILLS[@]}"; do
-    rm -rf "${dest:?}/$s"
+    rm -rf -- "${dest_real:?}/$s"
     if [ "$mode" = copy ]; then
-      cp -R "$SRC/$s" "$dest/$s"
+      cp -R -- "$SRC/$s" "$dest_real/$s"
     else
-      ln -s "$SRC/$s" "$dest/$s"
+      ln -s -- "$SRC/$s" "$dest_real/$s"
     fi
-    printf '  %-8s %s/%s\n' "$mode" "$dest" "$s"
+    printf '  %-8s %s/%s\n' "$mode" "$dest_real" "$s"
   done
-  echo "installed ${#SKILLS[@]} skills into $dest"
+  echo "installed ${#SKILLS[@]} skills into $dest_real"
 done

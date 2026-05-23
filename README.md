@@ -49,10 +49,9 @@ lists all options. After installing, restart the agent; in Claude Code run
 | **Codex** | `~/.agents/skills/` | `.agents/skills/` (cwd up to repo root) |
 
 `.agents/skills/` is the common open-standard location read by opencode, Kilo,
-and Codex; `.claude/skills/` is Claude Code's. This repo already ships an
-[`.agents/skills/`](.agents/skills/) directory (symlinks to the skills at the
-root), so any open-standard agent that opens this repo as a workspace picks the
-skills up with no install step.
+and Codex; `.claude/skills/` is Claude Code's. To make the skills available in a
+specific project rather than globally, install into that project's `.agents/skills/`
+or `.claude/skills/` with `install.sh --to PATH`.
 
 ### Manual install
 

@@ -7,7 +7,7 @@ description: >-
   pseudo-opcodes/directives (ORG, EQU, DFB, DW, DDB, DCI, ASC, HEX, DS, LUP,
   DO/FIN, MAC/EOM), the macro system and parameters (]1..]8), label and variable
   conventions (:local, ]var), expression operators and Merlin's left-to-right
-  evaluation, the <, >, ^ byte-select operators, and forced addressing modes.
+  evaluation, the low/high/bank byte-select operators, and forced addressing.
   Use this skill WHENEVER you encounter, write, or port Merlin-format assembly
   source, see Merlin directives like DFB/DCI/LUP/MAC/EOM/PUT, see labels like
   ]LOOP or :SKIP, or need to understand a .S Merlin listing. Especially trigger

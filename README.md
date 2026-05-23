@@ -15,6 +15,57 @@ assembler), the Commodore 64, and the Atari 400/800/XL/XE. All skills share a
 | **`6502-sweet16`** | Wozniak's SWEET16 — the 16-bit interpreted pseudo-processor in the Apple II Integer BASIC ROM (entry `$F689`): registers, opcode set, invocation, and how to decode its inline bytecode. |
 | **`6502-to-rust`** | A two-stage workflow for porting 6502 assembly to idiomatic Rust via an explicit, flag-faithful intermediate language: lift → recover intent → emit, plus correctness rules and a verification method. |
 
+## Installing
+
+Each skill is a directory with a `SKILL.md`, following the [Agent Skills](https://agentskills.io)
+open standard, so the same files work across Claude Code, opencode, Kilo Code,
+Codex, and any other tool that implements it. You point your agent at the skill
+directories; what differs per agent is *which* directory it scans.
+
+### Quick install — `install.sh`
+
+`install.sh` symlinks (or copies) the five `6502-*` skills into the right place:
+
+```sh
+./install.sh --claude            # Claude Code, personal      → ~/.claude/skills/
+./install.sh --agents            # open standard (opencode/Kilo/Codex) → ~/.agents/skills/
+./install.sh --claude --agents   # both at once
+./install.sh --opencode --kilo   # each agent's own global dir
+./install.sh --to PATH           # any explicit directory, e.g. a project's .claude/skills
+./install.sh --agents --copy     # copy instead of symlink (Windows, or to vendor into a repo)
+```
+
+Symlink is the default, so editing a skill here updates every install. `--help`
+lists all options. After installing, restart the agent; in Claude Code run
+`/skills` to confirm they loaded.
+
+### Where each agent looks
+
+| Agent | Global (all projects) | Per project |
+|-------|-----------------------|-------------|
+| **Claude Code** | `~/.claude/skills/<name>/` | `<project>/.claude/skills/<name>/` |
+| **opencode** | `~/.agents/skills/`, `~/.config/opencode/skills/`, `~/.claude/skills/` | `.agents/skills/`, `.opencode/skills/`, `.claude/skills/` |
+| **Kilo Code** | `~/.agents/skills/`, `~/.kilo/skills/`, `~/.claude/skills/` | `.agents/skills/`, `.kilo/skills/`, `.claude/skills/` |
+| **Codex** | `~/.agents/skills/` | `.agents/skills/` (cwd up to repo root) |
+
+`.agents/skills/` is the common open-standard location read by opencode, Kilo,
+and Codex; `.claude/skills/` is Claude Code's. This repo already ships an
+[`.agents/skills/`](.agents/skills/) directory (symlinks to the skills at the
+root), so any open-standard agent that opens this repo as a workspace picks the
+skills up with no install step.
+
+### Manual install
+
+Without the script, copy or symlink each `6502-*` directory into one of the
+locations above. For Claude Code, personal install:
+
+```sh
+for s in 6502-*/; do ln -s "$PWD/${s%/}" ~/.claude/skills/; done
+```
+
+The packaged `.skill` bundles (gitignored) are the zip form for skill
+marketplaces; for direct use, install the directories as above.
+
 ## How they fit together
 
 ```
